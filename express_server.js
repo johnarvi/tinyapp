@@ -37,6 +37,13 @@ app.post("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// app.post("/urls/:shortURL/delete", (req, res) => {
+//   let templateVars = { urls: urlDatabase };
+//   let shortURL = generateRandomString();
+//   urlDatabase[shortURL] = req.body.longURL;
+//   res.render("urls_index", templateVars);
+// });
+
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   res.render("urls_show", templateVars);
