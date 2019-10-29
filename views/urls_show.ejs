@@ -21,8 +21,8 @@
       <div class="card-body text-center" ></div>
         <h4 class="card-title" style="color: grey">Edit</h4>
       <p class="card-text">
-        <form class="form-inline test-center" method="POST" action="/urls/<%= shortURL %>">
-          <label for="longURL" style = "padding: 20px 80px">New URL:</label>
+        <form class="form-inline test-center" method="POST" action="/urls/<%= shortURL %>" style = "padding: 10px 400px">
+          <label for="longURL">New URL:</label>
             <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px">
               <button type="submit" class="btn btn-primary">Submit</button>
         </form>
