@@ -18,7 +18,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = { 
+const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
@@ -31,6 +31,14 @@ const users = {
   }
 };
 
+const emailExists = function(users, email) {
+  let y = Object.keys(users); let exists = false;
+  for (let id of y) {
+    if (email === users[id]['email']) {
+      exists = true;
+    }
+  } return exists;
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -111,6 +119,12 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   console.log(req.body);
+  if (req.body.email === '' || req.body.password === '') {
+    res.status(400).send('Please fill in the email and password fields');
+  }
+  if (emailExists(users, req.body.email)) {
+    res.status(400).send('You are already a registered user');
+  }
   let id = generateRandomString();
   users[id] = {};
   users[id].id = id;
