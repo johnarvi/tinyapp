@@ -37,6 +37,14 @@ app.post("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  let templateVars = { urls: urlDatabase };
+  // let shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.render("urls_index", templateVars);
+});
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   // console.log('reached', req.params.shortURL);
   // let templateVars = { urls: urlDatabase };
