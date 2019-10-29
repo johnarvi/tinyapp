@@ -29,9 +29,7 @@
             <form method="POST" action="/urls/<%= url %>/delete">
               <td><input type="submit" value="Delete" color = "red" style = "border-color: #f44336; border-radius: 5px"></td>
             </form>
-            <form method="POST" action="/urls">
-              <td><input type="submit" value="Edit" color = "white" style = "border-color: black; background-color: grey; border-radius: 5px"></td>
-            </form>
+            <td><a href="/urls/<%= url %>" color = "white" style = "padding: 5px 20px; background-color: grey; border-radius: 5px">Edit</a></td>
           </tr>
         <% } %>
       </tbody>
