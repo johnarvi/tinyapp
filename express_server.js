@@ -58,7 +58,7 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   console.log(req.body);
-  res.cookie('username', undefined);
+  res.clearCookie('username');
   // res.render("urls_index", templateVars);
   res.redirect("/urls");
 });
