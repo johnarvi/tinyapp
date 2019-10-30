@@ -79,7 +79,7 @@ app.get("/urls", (req, res) => {
   console.log(templateVars);
   res.render("urls_index", templateVars);
 });
-//-------------------------------------------------------------------------------------------------------------------
+
 app.get("/urls/new", (req, res) => {
   let userURLS = urlsForUser(req.cookies['user_id']);
   let templateVars = {
@@ -93,7 +93,7 @@ app.get("/urls/new", (req, res) => {
   }
   res.render("urls_index", templateVars);
 });
-// --------------------------------------------------------------------------------------------------------------------
+
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   let userURLS = urlsForUser(req.cookies['user_id']);
@@ -172,24 +172,29 @@ app.post("/register", (req, res) => {
 app.post("/logout", (req, res) => {
   console.log(req.body);
   res.clearCookie('user_id');
-  // res.render("urls_index", templateVars);
   res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  let templateVars = {
-    user: users[req.cookies['user_id']],
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL
-  };
-  // urlDatabase[req.params.shortURL] = req.body.longURL;
-  res.render("urls_index", templateVars);
+  let id = users[req.cookies['user_id']];
+  let y = Object.keys(urlDatabase);
+  for (let sht of y) {
+    if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
+      urlDatabase[sht].longURL = req.body.longURL;
+    }
+  }
+  res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  // console.log('reached', req.params.shortURL);
-  // let templateVars = { urls: urlDatabase };
-  delete urlDatabase[req.params.shortURL];
+  let id = users[req.cookies['user_id']];
+  let y = Object.keys(urlDatabase);
+  for (let sht of y) {
+    if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
+      delete urlDatabase[req.params.shortURL];
+    }
+  }
+
   res.redirect("/urls");
 });
 
