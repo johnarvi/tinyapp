@@ -80,16 +80,24 @@ app.post("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.post("/login", (req, res) => { // sets a cookie
+// coud create a separate page for error pages and a set timeout to redirect back to either login or register page.
+app.post("/login", (req, res) => {
   console.log(req.body);
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('Please fill in the email and password fields');
   }
   const user = lookID(users, req.body.email);
-  if (user) {
+  if (!emailExists(users, req.body.email)) {
+    res.status(403).send('Email does not exist- Please type in a valid email and password');
+  } else if (user.password !== req.body.password) {
+    res.status(403).send('Incorrect password');
+  } else if (user) {
     res.cookie('user_id', user.id);
+    res.redirect("/urls");
   }
-  res.redirect("/urls");
+  // else {
+  //   res.status(400).send();
+  // }
   console.log(users);
 });
 
