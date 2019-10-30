@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser"); //parses data into humanreadable
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -111,13 +112,15 @@ app.post("/urls", (req, res) => {
 
 // could create a separate page for error pages and a set timeout to redirect back to either login or register page.
 app.post("/login", (req, res) => {
+  const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('Please fill in the email and password fields');
   }
   const user = lookID(users, req.body.email);
   if (!emailExists(users, req.body.email)) {
     res.status(403).send('Email does not exist- Please type in a valid email and password');
-  } else if (user.password !== req.body.password) {
+  } else if (!bcrypt.compareSync(user.password, hashedPassword)) {
     res.status(403).send('Incorrect password');
   } else if (user) {
     res.cookie('user_id', user.id);
@@ -156,12 +159,14 @@ app.post("/register", (req, res) => {
     res.status(400).send('You are already a registered user');
   }
   let id = generateRandomString();
+  const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   users[id] = {}; users[id].id = id;
   users[id].email = req.body.email;
-  users[id].password = req.body.password;
+  users[id].password = hashedPassword;
   res.cookie('user_id', users[id]['id']);
   res.redirect("/urls");
-  console.log(users);
+  // console.log(users);
 });
 
 
