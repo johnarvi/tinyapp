@@ -28,7 +28,7 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url] %></td>
-            <td><a href="/urls/<%= url %>" color = "white" style = "padding: 5px 20px; background-color: grey; border-radius: 5px">Edit</a></td>
+            <td><a href="/urls/<%= url %>" style = "padding: 5px 20px; background-color: grey; border-radius: 5px">Edit</a></td>
             <form method="POST" action="/urls/<%= url %>/delete">
               <td><input type="submit" value="Delete" color = "red" style = "border-color: #f44336; border-radius: 5px"></td>
             </form>
@@ -50,3 +50,4 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
+

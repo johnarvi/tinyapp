@@ -71,38 +71,46 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  let userURLS = urlsForUser(req.cookies['user_id']);
   let templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlsForUser(users[req.cookies['user_id']])
+    urls: userURLS
   };
+  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
-
+//-------------------------------------------------------------------------------------------------------------------
 app.get("/urls/new", (req, res) => {
+  let userURLS = urlsForUser(req.cookies['user_id']);
   let templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlsForUser(users[req.cookies['user_id']]),
+    urls: userURLS,
   };
   if (templateVars.user) {
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
   }
+  res.render("urls_index", templateVars);
 });
-
+// --------------------------------------------------------------------------------------------------------------------
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
+  let userURLS = urlsForUser(req.cookies['user_id']);
   let templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlsForUser(users[req.cookies['user_id']])
+    urls: userURLS
   };
   console.log(templateVars);
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  res.render("urls_index", templateVars);
+  urlDatabase[shortURL] = {};
+  urlDatabase[shortURL].longURL = req.body.longURL;
+  urlDatabase[shortURL].userID = req.cookies['user_id'];
+  console.log(req.body);
+  res.redirect("/urls");
 });
 
-// coud create a separate page for error pages and a set timeout to redirect back to either login or register page.
+// could create a separate page for error pages and a set timeout to redirect back to either login or register page.
 app.post("/login", (req, res) => {
   console.log(req.body);
   if (req.body.email === '' || req.body.password === '') {
@@ -128,8 +136,8 @@ app.get("/login", (req, res) => { // sets a cookie
   }
   let templateVars = {
     user: users[req.cookies['user_id']],
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    urls: urlsForUser(users[req.cookies['user_id']])
+
   };
   res.render("urls_login", templateVars);
 });
@@ -138,8 +146,7 @@ app.get("/login", (req, res) => { // sets a cookie
 app.get("/register", (req, res) => {
   let templateVars = {
     user: users[req.cookies['user_id']],
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    urls: urlsForUser(users[req.cookies['user_id']])
   };
   res.render("urls_register", templateVars);
 });
@@ -170,9 +177,12 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  console.log(req.body);
-  let templateVars = { urls: urlDatabase };
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  let templateVars = {
+    user: users[req.cookies['user_id']],
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL].longURL
+  };
+  // urlDatabase[req.params.shortURL] = req.body.longURL;
   res.render("urls_index", templateVars);
 });
 
@@ -184,10 +194,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  console.log(req.params.shortURL);
   let templateVars = {
     user: users[req.cookies['user_id']],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL].longURL
   };
   res.render("urls_show", templateVars);
 });
@@ -195,7 +206,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
