@@ -76,7 +76,6 @@ app.get("/urls", (req, res) => {
     user: users[req.cookies['user_id']],
     urls: userURLS
   };
-  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
@@ -95,24 +94,23 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  let userURLS = urlsForUser(req.cookies['user_id']);
-  let templateVars = {
-    user: users[req.cookies['user_id']],
-    urls: userURLS
-  };
-  console.log(templateVars);
+  //console.log(req.body);  Log the POST request body to the console
+  // let userURLS = urlsForUser(req.cookies['user_id']);
+  // let templateVars = {
+  //   user: users[req.cookies['user_id']],
+  //   urls: userURLS
+  // };
+  // console.log(templateVars);
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {};
   urlDatabase[shortURL].longURL = req.body.longURL;
   urlDatabase[shortURL].userID = req.cookies['user_id'];
-  console.log(req.body);
+  // console.log(req.body);
   res.redirect("/urls");
 });
 
 // could create a separate page for error pages and a set timeout to redirect back to either login or register page.
 app.post("/login", (req, res) => {
-  console.log(req.body);
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('Please fill in the email and password fields');
   }
@@ -125,7 +123,6 @@ app.post("/login", (req, res) => {
     res.cookie('user_id', user.id);
     res.redirect("/urls");
   }
-  console.log(users);
 });
 
 app.get("/login", (req, res) => { // sets a cookie
@@ -152,7 +149,6 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  console.log(req.body);
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('Please fill in the email and password fields');
   }
@@ -170,7 +166,6 @@ app.post("/register", (req, res) => {
 
 
 app.post("/logout", (req, res) => {
-  console.log(req.body);
   res.clearCookie('user_id');
   res.redirect("/urls");
 });
@@ -191,15 +186,15 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   let y = Object.keys(urlDatabase);
   for (let sht of y) {
     if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
-      delete urlDatabase[req.params.shortURL];
+      delete urlDatabase[sht];
+    } else {
+      console.log("not a user");
     }
   }
-
   res.redirect("/urls");
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  console.log(req.params.shortURL);
   let templateVars = {
     user: users[req.cookies['user_id']],
     shortURL: req.params.shortURL,
