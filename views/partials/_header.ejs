@@ -10,8 +10,8 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls" style="padding-right: 10px; padding-left: 10px;">My URLs</a>
         <a  href="/urls/new" style="padding-right: 700px;">Create New URL</a>
-        <% if(username){ %>
-          <div class="nav-item nav-link">Logged In As: <%= username%></div>
+        <% if(user){ %>
+          <div class="nav-item nav-link">Logged In As: <%= user.email%></div>
             <form class="form-inline" action="/logout" method="POST">
             <button type="submit" class="btn btn-primary">Logout</button>
           </form>
@@ -20,7 +20,7 @@
             <form class="form-inline" action="/login" method="POST">
               <div class="form-group mb-2">
                 <!-- <label for="longURL" style="padding-right: 10px;">Enter a username:</label> -->
-                <input class="form-control" type="text" name="username" placeholder="Enter a username" style="width: 200px">
+                <input class="form-control" type="text" name="email" placeholder="Enter an email" style="width: 200px">
                 <button type="submit" class="btn btn-primary">Login</button>
               </div>
             </div>
