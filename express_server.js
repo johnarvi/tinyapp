@@ -31,21 +31,19 @@ const users = {
   }
 };
 
-const emailExists = function(users, email) { // change function name to something more appropriate
-  let y = Object.keys(users); /*let exists = false;*/
+const emailExists = function(users, email) {
+  let y = Object.keys(users); let exists = false;
   for (let id of y) {
     if (email === users[id]['email']) {
-      //exists = true;
-      return users[id];
+      exists = true;
     }
-  } return null;
+  } return exists;
 };
 
-const lookID = function(users, email) { // change function name to something more appropriate
-  let y = Object.keys(users); /*let exists = false;*/
+const lookID = function(users, email) {
+  let y = Object.keys(users);
   for (let id of y) {
     if (email === users[id]['email']) {
-      //exists = true;
       return users[id];
     }
   } return null;
@@ -84,12 +82,26 @@ app.post("/urls", (req, res) => {
 
 app.post("/login", (req, res) => { // sets a cookie
   console.log(req.body);
+  let templateVars = {
+    user: users[req.cookies['user_id']],
+    urls: urlDatabase
+  };
   const user = lookID(users, req.body.email);
   if (user) {
     res.cookie('user_id', user.id);
   }
   // res.render("urls_index", templateVars);
-  res.redirect("/urls");
+  res.render("urls_index", templateVars);
+});
+
+app.get("/login", (req, res) => { // sets a cookie
+  console.log(req.body);
+  const user = lookID(users, req.body.email);
+  if (user) {
+    res.cookie('user_id', user.id);
+  }
+  // res.render("urls_index", templateVars);
+  res.render("urls_login");
 });
 
 app.post("/logout", (req, res) => {
