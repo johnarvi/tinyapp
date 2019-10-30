@@ -14,8 +14,10 @@ const generateRandomString = function() {
 };
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
+  i3ByGr: { longURL: "https://www.google.ca", userID: "userRandomID" },
+  i3ByGd: { longURL: "https://www.lighthouselabs.ca", userID: "user2RandomID" }
 };
 
 const users = {
@@ -28,6 +30,11 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
+  },
+  "aJ48lW": {
+    id: "aJ48lW",
+    email: "aJ48lW@example.com",
+    password: "dish"
   }
 };
 
@@ -49,6 +56,16 @@ const lookID = function(users, email) {
   } return null;
 };
 
+const urlsForUser = function(id) {
+  let y = Object.keys(urlDatabase);
+  let userUrls = {};
+  for (let i of y) {
+    if (id === urlDatabase[i]['userID']) {
+      userUrls[i] = urlDatabase[i].longURL;
+    }
+  } return userUrls;
+};
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -56,7 +73,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlDatabase
+    urls: urlsForUser(users[req.cookies['user_id']])
   };
   res.render("urls_index", templateVars);
 });
@@ -64,7 +81,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   let templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlDatabase
+    urls: urlsForUser(users[req.cookies['user_id']]),
   };
   if (templateVars.user) {
     res.render("urls_new", templateVars);
@@ -77,8 +94,9 @@ app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   let templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlDatabase
+    urls: urlsForUser(users[req.cookies['user_id']])
   };
+  console.log(templateVars);
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.render("urls_index", templateVars);
