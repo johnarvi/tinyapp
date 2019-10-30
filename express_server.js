@@ -66,7 +66,11 @@ app.get("/urls/new", (req, res) => {
     user: users[req.cookies['user_id']],
     urls: urlDatabase
   };
-  res.render("urls_new", templateVars);
+  if (templateVars.user) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.post("/urls", (req, res) => {
@@ -95,9 +99,6 @@ app.post("/login", (req, res) => {
     res.cookie('user_id', user.id);
     res.redirect("/urls");
   }
-  // else {
-  //   res.status(400).send();
-  // }
   console.log(users);
 });
 
@@ -112,7 +113,6 @@ app.get("/login", (req, res) => { // sets a cookie
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
   };
-  // res.render("urls_index", templateVars);
   res.render("urls_login", templateVars);
 });
 
@@ -135,8 +135,7 @@ app.post("/register", (req, res) => {
     res.status(400).send('You are already a registered user');
   }
   let id = generateRandomString();
-  users[id] = {};
-  users[id].id = id;
+  users[id] = {}; users[id].id = id;
   users[id].email = req.body.email;
   users[id].password = req.body.password;
   res.cookie('user_id', users[id]['id']);
