@@ -134,6 +134,9 @@ app.post("/logout", (req, res) => {
   delete req.session.user_id;
   res.redirect("/urls");
 });
+app.get("/logout", (req, res) => {
+  res.redirect("/urls");
+});
 
 app.post("/urls/:shortURL", (req, res) => {
   let id = users[req.session.user_id];
@@ -167,7 +170,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  urlVisits++
+  urlVisits++;
   let templateVars = {
     user: users[req.session.user_id],
     shortURL: req.params.shortURL,
