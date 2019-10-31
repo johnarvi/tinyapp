@@ -27,4 +27,9 @@ const urlsForUser = function(id, Database) {
 };
 
 
-module.exports = { emailExists , lookID, urlsForUser };
+const generateRandomString = function() {
+  let ranStr = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+  return ranStr;
+};
+
+module.exports = { emailExists , lookID, urlsForUser, generateRandomString };

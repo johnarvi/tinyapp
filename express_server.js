@@ -4,7 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser"); //parses data into humanreadable
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcrypt');
-const { emailExists , lookID, urlsForUser } = require('./helpers');
+const { emailExists , lookID, urlsForUser, generateRandomString } = require('./helpers');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -13,11 +13,6 @@ app.use(cookieSession({
 }));
 
 app.set("view engine", "ejs");
-
-const generateRandomString = function() {
-  let ranStr = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-  return ranStr;
-};
 
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
