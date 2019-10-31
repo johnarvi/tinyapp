@@ -78,13 +78,13 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   if (req.body.email === '' || req.body.password === '') {
-    res.status(400).send('Please fill in the email and password fields');
+    res.status(400).send('<h1>Please fill in the email and password fields</h1><h1><a href="/register">Click me to get back</a></h1>');
   }
   const user = lookID(users, req.body.email);
   if (!emailExists(users, req.body.email)) {
-    res.status(403).send('Email does not exist- Please type in a valid email and password');
+    res.status(403).send('<h1>Email does not exist- Please type in a valid email and password</h1><h1><a href="/register">Click me to get back</a></h1>');
   } else if (!bcrypt.compareSync(user.password, hashedPassword)) {
-    res.status(403).send('Incorrect password');
+    res.status(403).send('<h1>Incorrect password</h1><h1><a href="/register">Click me to get back</a></h1>');
   } else if (user) {
     req.session.user_id = user.id;
     res.redirect("/urls");
@@ -94,7 +94,6 @@ app.post("/login", (req, res) => {
 app.get("/login", (req, res) => {
   const user = lookID(users, req.body.email);
   if (user) {
-
     req.session.user_id = user.id;
   }
   let templateVars = {
@@ -115,10 +114,10 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
-    res.status(400).send('Please fill in the email and password fields');
+    res.status(400).send('<h1>Please fill in the email and password fields</h1><h1><a href="/register">Click me to get back</a></h1>');
   }
   if (emailExists(users, req.body.email)) {
-    res.status(400).send('You are already a registered user');
+    res.status(400).send('<h1>You are already a registered user.</h1><h1><a href="/register">Click me to get back</a></h1>');
   }
   let id = generateRandomString();
   const password = req.body.password;
