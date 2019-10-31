@@ -41,7 +41,11 @@ const users = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/urls", (req, res) => {
@@ -142,8 +146,10 @@ app.post("/urls/:shortURL", (req, res) => {
   let id = users[req.session.user_id];
   let y = Object.keys(urlDatabase);
   if (!req.session.user_id) {
-    res.status(403).send('Do not have edit permissions for this link');
+    res.status(403).send('<h1>Do not have edit permissions for this link</h1>');
     res.redirect("/urls");
+  } else if (req.session.user_id && !(urlsForUser(id, urlDatabase)).longURL) {
+    res.status(403).send('URL does not exists');
   }
   for (let sht of y) {
     if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
@@ -157,8 +163,8 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   let id = users[req.session.user_id];
   let y = Object.keys(urlDatabase);
-  if (!req.session.user_id) {
-    res.status(403).send('Do not have delete permissions for this link');
+  if (!req.session.user_id || id.id !== req.session.user_id) {
+    res.status(403).send('<h1>Do not have delete permissions for this link</h1>');
     res.redirect("/urls");
   }
   for (let sht of y) {
@@ -171,18 +177,25 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   urlVisits++;
-  let templateVars = {
-    user: users[req.session.user_id],
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    urlVisits: urlVisits
-  };
-  res.render("urls_show", templateVars);
+  if (urlDatabase[req.params.shortURL] && urlDatabase[req.params.shortURL].userID === req.session.user_id) {
+    let templateVars = {
+      user: users[req.session.user_id],
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+      urlVisits: urlVisits
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(400).send('<h1>Oops. Something went wrong <i>(could be due to the following reasons)</i></h1><h2><li>The"tiny URL" is not valid</li><li>You have not created this link</li><li>You are not logged in</li></h2>');
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  if (urlDatabase[req.params.shortURL]) {
+    res.redirect(urlDatabase[req.params.shortURL].longURL);
+  } else {
+    res.status(403).send('<h1>This is not a valid "tiny URL"</h1>');
+  }
 });
 
 app.get("/urls.json", (req, res) => {
