@@ -1,3 +1,4 @@
+//returns a boolean depending on user existance
 const emailExists = function(users, email) {
   let y = Object.keys(users); let exists = false;
   for (let id of y) {
@@ -6,7 +7,7 @@ const emailExists = function(users, email) {
     }
   } return exists;
 };
-
+//returns an object containing user details
 const getIDfromEmail = function(users, email) {
   let y = Object.keys(users);
   for (let id of y) {
@@ -15,7 +16,7 @@ const getIDfromEmail = function(users, email) {
     }
   } return null;
 };
-
+//returns an object containing users tiny urls and long urls
 const urlsForUser = function(id, Database) {
   let y = Object.keys(Database);
   let userUrls = {};

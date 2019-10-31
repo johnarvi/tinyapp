@@ -145,10 +145,12 @@ app.get("/logout", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   let id = users[req.session.user_id];
   let y = Object.keys(urlDatabase);
-  if (!req.session.user_id) {
-    res.status(403).send('<h1>Do not have edit permissions for this link</h1>');
+  if (!req.session.user_id || id.id !== req.session.user_id || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+    res.status(403).send('<h1>Do not have edit permissions for this link Or you are not logged in</h1>');
     res.redirect("/urls");
-  } else if (req.session.user_id && !(urlsForUser(id, urlDatabase)).longURL) {
+  } else if (req.body.longURL === '') {
+    res.status(400).send('<h1>Please fill in the "New URL" field</h1>');
+  } else if (req.session.user_id && urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
     res.status(403).send('URL does not exists');
   }
   for (let sht of y) {
