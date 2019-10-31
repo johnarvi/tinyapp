@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { lookID, emailExists, generateRandomString } = require('../helpers.js');
+const { getIDfromEmail, emailExists, generateRandomString } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -17,25 +17,25 @@ const testUsers = {
 
 describe('email generating/ testing functions and random string generator', function() {
   it('should return a user with valid email', function() {
-    const user = lookID(testUsers, "user@example.com");
+    const user = getIDfromEmail(testUsers, "user@example.com");
     const expectedOutput = "userRandomID";
     assert.equal(user.id, expectedOutput);
   });
 
   it('should return a user object with valid email', function() {
-    const user = lookID(testUsers, "user@example.com");
+    const user = getIDfromEmail(testUsers, "user@example.com");
     const expectedOutput = testUsers["userRandomID"];
     assert.deepEqual(user, expectedOutput);
   });
 
   it('should return null with an invalid email', function() {
-    const user = lookID(testUsers, "user3@example.com");
+    const user = getIDfromEmail(testUsers, "user3@example.com");
     const expectedOutput = null;
     assert.deepEqual(user, expectedOutput);
   });
 
   it('should return undefined with an invalid email', function() {
-    const user = lookID(testUsers, "user3@example.com");
+    const user = getIDfromEmail(testUsers, "user3@example.com");
     const expectedOutput = null;
     assert.equal(user, expectedOutput);
   });

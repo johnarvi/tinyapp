@@ -4,7 +4,7 @@ const PORT = 8080;
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcrypt');
-const { emailExists , lookID, urlsForUser, generateRandomString } = require('./helpers');
+const { emailExists , getIDfromEmail, urlsForUser, generateRandomString } = require('./helpers');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -80,7 +80,7 @@ app.post("/login", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('<h1>Please fill in the email and password fields</h1><h1><a href="/register">Click me to get back</a></h1>');
   }
-  const user = lookID(users, req.body.email);
+  const user = getIDfromEmail(users, req.body.email);
   if (!emailExists(users, req.body.email)) {
     res.status(403).send('<h1>Email does not exist- Please type in a valid email and password</h1><h1><a href="/register">Click me to get back</a></h1>');
   } else if (!bcrypt.compareSync(user.password, hashedPassword)) {
@@ -92,7 +92,7 @@ app.post("/login", (req, res) => {
 });
 // sets a cookie
 app.get("/login", (req, res) => {
-  const user = lookID(users, req.body.email);
+  const user = getIDfromEmail(users, req.body.email);
   if (user) {
     req.session.user_id = user.id;
   }

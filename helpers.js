@@ -7,7 +7,7 @@ const emailExists = function(users, email) {
   } return exists;
 };
 
-const lookID = function(users, email) {
+const getIDfromEmail = function(users, email) {
   let y = Object.keys(users);
   for (let id of y) {
     if (email === users[id]['email']) {
@@ -32,4 +32,4 @@ const generateRandomString = function() {
   return ranStr;
 };
 
-module.exports = { emailExists , lookID, urlsForUser, generateRandomString };
+module.exports = { emailExists , getIDfromEmail, urlsForUser, generateRandomString };
