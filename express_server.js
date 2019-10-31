@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcrypt');
 const { emailExists , getIDfromEmail, urlsForUser, generateRandomString } = require('./helpers');
+let urlVisits = 0;
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -166,10 +167,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  urlVisits++
   let templateVars = {
     user: users[req.session.user_id],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL
+    longURL: urlDatabase[req.params.shortURL].longURL,
+    urlVisits: urlVisits
   };
   res.render("urls_show", templateVars);
 });
