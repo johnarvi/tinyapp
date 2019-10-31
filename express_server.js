@@ -63,12 +63,11 @@ app.get("/urls/new", (req, res) => {
     user: users[req.session.user_id],
     urls: userURLS,
   };
-  if (templateVars.user) {
+  if (req.session.user_id) {
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
   }
-  res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -78,7 +77,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[shortURL].userID = req.session.user_id;
   res.redirect("/urls");
 });
-// could create a separate page for error pages and a set timeout to redirect back to either login or register page.
+
 app.post("/login", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
