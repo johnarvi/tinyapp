@@ -137,6 +137,10 @@ app.post("/logout", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   let id = users[req.session.user_id];
   let y = Object.keys(urlDatabase);
+  if (!req.session.user_id) {
+    res.status(403).send('Do not have edit permissions for this link');
+    res.redirect("/urls");
+  }
   for (let sht of y) {
     if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
       urlDatabase[sht].longURL = req.body.longURL;
@@ -145,9 +149,14 @@ app.post("/urls/:shortURL", (req, res) => {
   res.redirect("/urls");
 });
 
+//for testing - curl -X POST -i localhost:8080/urls/b6UTxQ/delete
 app.post("/urls/:shortURL/delete", (req, res) => {
   let id = users[req.session.user_id];
   let y = Object.keys(urlDatabase);
+  if (!req.session.user_id) {
+    res.status(403).send('Do not have delete permissions for this link');
+    res.redirect("/urls");
+  }
   for (let sht of y) {
     if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
       delete urlDatabase[sht];
