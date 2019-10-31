@@ -4,6 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser"); //parses data into humanreadable
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcrypt');
+const { emailExists , lookID, urlsForUser } = require('./helpers');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -43,41 +44,13 @@ const users = {
   }
 };
 
-const emailExists = function(users, email) {
-  let y = Object.keys(users); let exists = false;
-  for (let id of y) {
-    if (email === users[id]['email']) {
-      exists = true;
-    }
-  } return exists;
-};
-
-const lookID = function(users, email) {
-  let y = Object.keys(users);
-  for (let id of y) {
-    if (email === users[id]['email']) {
-      return users[id];
-    }
-  } return null;
-};
-
-const urlsForUser = function(id) {
-  let y = Object.keys(urlDatabase);
-  let userUrls = {};
-  for (let i of y) {
-    if (id === urlDatabase[i]['userID']) {
-      userUrls[i] = urlDatabase[i].longURL;
-    }
-  } return userUrls;
-};
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
 app.get("/urls", (req, res) => {
   //let userURLS = urlsForUser(req.cookies['user_id']);
-  let userURLS = urlsForUser(req.session.user_id);
+  let userURLS = urlsForUser(req.session.user_id, urlDatabase);
   let templateVars = {
     //user: users[req.cookies['user_id']],
     user: users[req.session.user_id],
@@ -88,7 +61,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   // let userURLS = urlsForUser(req.cookies['user_id']);
-  let userURLS = urlsForUser(req.session.user_id);
+  let userURLS = urlsForUser(req.session.user_id, urlDatabase);
   let templateVars = {
     // user: users[req.cookies['user_id']],
     user: users[req.session.user_id],
@@ -149,7 +122,7 @@ app.get("/login", (req, res) => { // sets a cookie
     //user: users[req.cookies['user_id']],
     //urls: urlsForUser(users[req.cookies['user_id']])
     user: users[req.session.user_id],
-    urls: urlsForUser(users[req.session.user_id])
+    urls: urlsForUser(users[req.session.user_id], urlDatabase)
 
   };
   res.render("urls_login", templateVars);
@@ -161,7 +134,7 @@ app.get("/register", (req, res) => {
     // user: users[req.cookies['user_id']],
     // urls: urlsForUser(users[req.cookies['user_id']])
     user: users[req.session.user_id],
-    urls: urlsForUser(users[req.session.user_id])
+    urls: urlsForUser(users[req.session.user_id], urlDatabase)
   };
   res.render("urls_register", templateVars);
 });
@@ -180,7 +153,7 @@ app.post("/register", (req, res) => {
   users[id].email = req.body.email;
   users[id].password = hashedPassword;
   //res.cookie('user_id', users[id]['id']);
-  req.session.user_id = id;
+  req.session.user_id = id; // here the id is set to the cookie and decrypted
   res.redirect("/urls");
   // console.log(users);
 });
@@ -194,7 +167,7 @@ app.post("/logout", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   //let id = users[req.cookies['user_id']];
-  let id = users[req.session.user_id];
+  let id = users[req.session.user_id]; // here the decrytped cookie is read
   let y = Object.keys(urlDatabase);
   for (let sht of y) {
     if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
