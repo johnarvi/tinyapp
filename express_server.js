@@ -132,10 +132,11 @@ app.post("/register", (req, res) => {
   let id = generateRandomString();
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
+  req.session.user_id = id;
   users[id] = {}; users[id].id = id;
   users[id].email = req.body.email;
   users[id].password = hashedPassword;
-  req.session.user_id = id;
+  console.log(req.session.user_id);
   res.redirect("/urls");
 });
 
@@ -199,6 +200,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
+    urlVisits++;
     res.redirect(urlDatabase[req.params.shortURL].longURL);
   } else {
     res.status(403).send('<h1>This is not a valid "tiny URL"</h1>');
