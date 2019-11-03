@@ -136,7 +136,6 @@ app.post("/register", (req, res) => {
   users[id] = {}; users[id].id = id;
   users[id].email = req.body.email;
   users[id].password = hashedPassword;
-  console.log(req.session.user_id);
   res.redirect("/urls");
 });
 
