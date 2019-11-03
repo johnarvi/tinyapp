@@ -97,6 +97,9 @@ app.post("/login", (req, res) => {
 // sets a cookie
 app.get("/login", (req, res) => {
   const user = getIDfromEmail(users, req.body.email);
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  }
   if (user) {
     req.session.user_id = user.id;
   }
@@ -113,6 +116,9 @@ app.get("/register", (req, res) => {
     user: users[req.session.user_id],
     urls: urlsForUser(users[req.session.user_id], urlDatabase)
   };
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  }
   res.render("urls_register", templateVars);
 });
 
@@ -164,7 +170,7 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   let id = users[req.session.user_id];
   let y = Object.keys(urlDatabase);
-  if (!req.session.user_id || id.id !== req.session.user_id) {
+  if (!req.session.user_id || id.id !== req.session.user_id || urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
     res.status(403).send('<h1>Do not have delete permissions for this link</h1>');
     res.redirect("/urls");
   }
