@@ -26,17 +26,17 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10)
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", 10)
   },
   "aJ48lW": {
     id: "aJ48lW",
     email: "aJ48lW@example.com",
-    password: "dish"
+    password: bcrypt.hashSync("dish", 10)
   }
 };
 
@@ -87,8 +87,6 @@ app.post("/login", (req, res) => {
   if (!emailExists(users, req.body.email)) {
     res.status(403).send('<h1>Email does not exist- Please type in a valid email and password</h1><h1><a href="/register">Click me to get back</a></h1>');
   } else if (!bcrypt.compareSync(password, user.password)) {
-    console.log(user.password);
-    console.log(hashedPassword);
     res.status(403).send('<h1>Incorrect password</h1><h1><a href="/register">Click me to get back</a></h1>');
   } else if (user) {
     req.session.user_id = user.id;
@@ -109,9 +107,6 @@ app.get("/login", (req, res) => {
     
   };
   res.render("urls_login", templateVars);
-        // if (req.session.user_id) {
-        //   res.redirect('/urls');
-        // }
 });
 
 app.get("/register", (req, res) => {
@@ -119,9 +114,6 @@ app.get("/register", (req, res) => {
     user: users[req.session.user_id],
     urls: urlsForUser(users[req.session.user_id], urlDatabase)
   };
-  if (req.session.user_id) {
-    res.redirect('/urls');
-  }
   res.render("urls_register", templateVars);
 });
 
@@ -163,9 +155,9 @@ app.post("/urls/:shortURL", (req, res) => {
   } else if (req.session.user_id && urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
     res.status(403).send('URL does not exists');
   }
-  for (let sht of y) {
-    if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
-      urlDatabase[sht].longURL = req.body.longURL;
+  for (let shortUrl of y) {
+    if (urlDatabase[shortUrl].userID === id.id && shortUrl === req.params.shortURL) {
+      urlDatabase[shortUrl].longURL = req.body.longURL;
     }
   }
   res.redirect("/urls");
@@ -179,9 +171,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.status(403).send('<h1>Do not have delete permissions for this link</h1>');
     res.redirect("/urls");
   }
-  for (let sht of y) {
-    if (urlDatabase[sht].userID === id.id && sht === req.params.shortURL) {
-      delete urlDatabase[sht];
+  for (let shortUrl of y) {
+    if (urlDatabase[shortUrl].userID === id.id && shortUrl === req.params.shortURL) {
+      delete urlDatabase[shortUrl];
     }
   }
   res.redirect("/urls");

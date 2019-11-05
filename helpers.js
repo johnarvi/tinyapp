@@ -17,20 +17,20 @@ const getIDfromEmail = function(users, email) {
   } return null;
 };
 //returns an object containing users tiny urls and long urls
-const urlsForUser = function(id, Database) {
-  let y = Object.keys(Database);
+const urlsForUser = function(id, database) {
+  let y = Object.keys(database);
   let userUrls = {};
   for (let i of y) {
-    if (id === Database[i]['userID']) {
-      userUrls[i] = Database[i].longURL;
+    if (id === database[i]['userID']) {
+      userUrls[i] = database[i].longURL;
     }
   } return userUrls;
 };
 
 
 const generateRandomString = function() {
-  let ranStr = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-  return ranStr;
+  let randomStr = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+  return randomStr;
 };
 
 module.exports = { emailExists , getIDfromEmail, urlsForUser, generateRandomString };
