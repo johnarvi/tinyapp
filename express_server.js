@@ -96,8 +96,6 @@ app.post("/login", (req, res) => {
 // sets a cookie
 app.get("/login", (req, res) => {
   const user = getIDfromEmail(users, req.body.email);
-  console.log(urlDatabase);
-  console.log(req.body.email);
   if (user) {
     req.session.user_id = user.id;
   }
@@ -131,13 +129,11 @@ app.post("/register", (req, res) => {
   users[id] = {}; users[id].id = id;
   users[id].email = req.body.email;
   users[id].password = hashedPassword;
-  console.log(users);
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
   delete req.session.user_id;
-  console.log(users);
   res.redirect("/urls");
 });
 app.get("/logout", (req, res) => {
