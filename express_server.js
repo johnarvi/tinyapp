@@ -80,14 +80,15 @@ app.post("/urls", (req, res) => {
 
 app.post("/login", (req, res) => {
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('<h1>Please fill in the email and password fields</h1><h1><a href="/register">Click me to get back</a></h1>');
   }
   const user = getIDfromEmail(users, req.body.email);
   if (!emailExists(users, req.body.email)) {
     res.status(403).send('<h1>Email does not exist- Please type in a valid email and password</h1><h1><a href="/register">Click me to get back</a></h1>');
-  } else if (!bcrypt.compareSync(user.password, hashedPassword)) {
+  } else if (!bcrypt.compareSync(password, user.password)) {
+    console.log(user.password);
+    console.log(hashedPassword);
     res.status(403).send('<h1>Incorrect password</h1><h1><a href="/register">Click me to get back</a></h1>');
   } else if (user) {
     req.session.user_id = user.id;
@@ -97,18 +98,20 @@ app.post("/login", (req, res) => {
 // sets a cookie
 app.get("/login", (req, res) => {
   const user = getIDfromEmail(users, req.body.email);
-  if (req.session.user_id) {
-    res.redirect('/urls');
-  }
+  console.log(urlDatabase);
+  console.log(req.body.email);
   if (user) {
     req.session.user_id = user.id;
   }
   let templateVars = {
     user: users[req.session.user_id],
     urls: urlsForUser(users[req.session.user_id], urlDatabase)
-
+    
   };
   res.render("urls_login", templateVars);
+        // if (req.session.user_id) {
+        //   res.redirect('/urls');
+        // }
 });
 
 app.get("/register", (req, res) => {
@@ -136,11 +139,13 @@ app.post("/register", (req, res) => {
   users[id] = {}; users[id].id = id;
   users[id].email = req.body.email;
   users[id].password = hashedPassword;
+  console.log(users);
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
   delete req.session.user_id;
+  console.log(users);
   res.redirect("/urls");
 });
 app.get("/logout", (req, res) => {
@@ -183,7 +188,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  urlVisits++;
   if (urlDatabase[req.params.shortURL] && urlDatabase[req.params.shortURL].userID === req.session.user_id) {
     let templateVars = {
       user: users[req.session.user_id],
